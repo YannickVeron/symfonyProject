@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "database": ".\\symfonyproject/var/data.db",
+            "dialect": "SQLite",
+            "name": "Data"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

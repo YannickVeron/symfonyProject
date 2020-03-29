@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<h2>Movies</h2>
+    <ul>
+    {%for movie in movies %}
+        <p>{{movie.title}}</p>
+    {% endfor %}
+    </ul>
+{% endblock %}
