@@ -28,10 +28,9 @@ class Rating
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Movie", inversedBy="ratings")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="integer")
      */
-    private $movie;
+    private $movieId;
 
     public function getId(): ?int
     {
@@ -62,14 +61,14 @@ class Rating
         return $this;
     }
 
-    public function getMovie(): ?movie
+    public function getMovie(): ?int
     {
-        return $this->movie;
+        return $this->movieId;
     }
 
-    public function setMovie(?movie $movie): self
+    public function setMovie(?int $movieId): self
     {
-        $this->movie = $movie;
+        $this->movieId = $movieId;
 
         return $this;
     }

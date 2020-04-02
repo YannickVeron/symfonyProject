@@ -29,10 +29,10 @@ class Comment
      */
     private $user;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Movie", inversedBy="comments")
+   /**
+     * @ORM\Column(type="integer")
      */
-    private $movie;
+    private $movieId;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="replyTo")
@@ -78,14 +78,14 @@ class Comment
         return $this;
     }
 
-    public function getMovie(): ?movie
+    public function getMovie(): ?int
     {
-        return $this->movie;
+        return $this->movieId;
     }
 
-    public function setMovie(?movie $movie): self
+    public function setMovie(?int $movieId): self
     {
-        $this->movie = $movie;
+        $this->movieId = $movieId;
 
         return $this;
     }
