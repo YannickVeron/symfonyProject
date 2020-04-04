@@ -78,12 +78,12 @@ class Comment
         return $this;
     }
 
-    public function getMovie(): ?int
+    public function getMovieId(): ?int
     {
         return $this->movieId;
     }
 
-    public function setMovie(?int $movieId): self
+    public function setMovieId(?int $movieId): self
     {
         $this->movieId = $movieId;
 
@@ -96,6 +96,15 @@ class Comment
     public function getComments(): Collection
     {
         return $this->comments;
+    }
+
+    public function getReplyTo(): ?Comment{
+        return $this->replyTo;
+    }
+    public function setReplyTo(?Comment $comment):self
+    {
+        $this->replyTo=$comment;
+        return $this;
     }
 
     public function addComment(Comment $comment): self
@@ -119,5 +128,10 @@ class Comment
         }
 
         return $this;
+    }
+
+    public function __toString(): String
+    {
+        return $this->getText();
     }
 }

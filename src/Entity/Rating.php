@@ -61,12 +61,12 @@ class Rating
         return $this;
     }
 
-    public function getMovie(): ?int
+    public function getMovieId(): ?int
     {
         return $this->movieId;
     }
 
-    public function setMovie(?int $movieId): self
+    public function setMovieId(?int $movieId): self
     {
         $this->movieId = $movieId;
 

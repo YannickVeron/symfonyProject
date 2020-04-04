@@ -2,6 +2,5 @@ easy_admin:
     entities:
         # List the entity class name you want to manage
         - App\Entity\User
-        - App\Entity\Movie
         - App\Entity\Rating
         - App\Entity\Comment
