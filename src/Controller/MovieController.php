@@ -19,7 +19,7 @@ class MovieController extends AbstractController
     {
 
         $client = HttpClient::create();
-        $secret= "4ab62c41adff3e08feda913337efb774";//to move elsewhere, .env maybe ?
+        $secret= "c029119e5cf73439700add1d1e54af11";//to move elsewhere, .env maybe ?
         $link = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
         $response = $client->request('GET', $link);
 

@@ -5,8 +5,25 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
     </head>
+
+    <header>
+        <h1 style="height:150px;background-color:red;text-align:center;"> Social Movie </h1>
+        <a href="/" > Accueil </a>
+        <a href="/inscription" > Inscrptions </a>
+        <a href="/login" > Connection </a>
+        <a href="/logout" > Déconnection </a>
+
+        <a href="/admin" > Admin </a>
+    </header>
+
+
     <body>
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </body>
 </html>
+
+
+
+<body>
+
