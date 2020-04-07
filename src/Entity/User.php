@@ -188,7 +188,7 @@ class User implements UserInterface
 
     public function __toString(): String
     {
-        return $this->username;
+        return $this->email;
     }
 
     public function __construct()
@@ -196,14 +196,4 @@ class User implements UserInterface
         $this->ratings = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
-
-
-
-
-
-
-
-
-
-
 }

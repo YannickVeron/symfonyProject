@@ -72,4 +72,9 @@ class Rating
 
         return $this;
     }
+
+    public function __toString(): String
+    {
+        return "Movie_".$this->movieId."-User_".$this->user->getId();
+    }
 }
