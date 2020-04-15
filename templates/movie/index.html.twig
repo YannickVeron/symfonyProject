@@ -1,10 +1,25 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-<h2>Movies</h2>
-<ul>
-{%for movie in movies %}
-    <p>{{movie.title}}</p>
-    <a class="btn btn-primary" href="{{ path('movie_show',{id:movie.id,name:movie.title}) }}">Detail</a>
-{% endfor %}
-</ul>
+
+
+                <h2>Movies</h2>
+            <ul>
+                {%for movie in movies %}
+
+
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title"><p>{{movie.title}}</p></h5>
+                            <a class="btn btn-primary" href="{{ path('movie_show',{id:movie.id,name:movie.title}) }}">Detail</a>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </ul>
+
+
+
+
+
+
 {% endblock %}

@@ -13,6 +13,7 @@ use App\Form\UserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
+
 class UserController extends AbstractController
 {
     /**
@@ -21,8 +22,8 @@ class UserController extends AbstractController
     public function index(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator): Response
     {
         $user = new User();
-        $user->setEmail("votre mail !");
-        $user->setPassword("votre mot de passe !");
+        $user->setEmail("@gmail.com");
+        $user->setPassword("");
         $form = $this->createForm(UserType::class, $user);
 
 
@@ -30,9 +31,9 @@ class UserController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-
-
-
+            $user->setPassword(
+                $passwordEncoder->encodePassword($user, $form->get('password')->getData())
+            );
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
