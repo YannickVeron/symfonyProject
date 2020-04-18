@@ -25,6 +25,8 @@ class MovieController extends AbstractController
         $statusCode = $response->getStatusCode();
         $contentType = $response->getHeaders()['content-type'][0];
         $content = $response->toArray();
+
+
         return $this->render("movie/index.html.twig",["movies"=>$content["results"]]);
     }
 
