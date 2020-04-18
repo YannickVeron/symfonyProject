@@ -1,6 +1,21 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <h2>{{movie.title}}</h2><span>{{rating}}/10</span>
+
+
+    <img src="https://image.tmdb.org/t/p/w200/{{movie.poster_path}}" >
+
+    <a href="https://www.youtube.com/watch?v={{trailer.key}}"> Bande Annonce </a>
+
+
+
+
+
+
+
+
+
+
     <p>{{movie.overview}}</p>
 
     {% if is_granted('ROLE_USER') %}
