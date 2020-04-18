@@ -1,38 +1,54 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    <h2>{{movie.title}}</h2><span>{{rating}}/10</span>
 
+    <div class="row"  >
+        <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
 
-    <img src="https://image.tmdb.org/t/p/w200/{{movie.poster_path}}" >
-
-    <a href="https://www.youtube.com/watch?v={{trailer.key}}"> Bande Annonce </a>
-
-
-
-
-
-
-
-
-
-
-    <p>{{movie.overview}}</p>
-
-    {% if is_granted('ROLE_USER') %}
-        <form action="{{ path('rating_rate',{id:movie.id})}}" method="post" id="ratingForm">
-            <div class="rating">
-                <span><input type="radio" name="rating" id="str10" value="10"><label for="str10"></label></span>
-                <span><input type="radio" name="rating" id="str9" value="9"><label for="str9"></label></span>
-                <span><input type="radio" name="rating" id="str8" value="8"><label for="str8"></label></span>
-                <span><input type="radio" name="rating" id="str7" value="7"><label for="str7"></label></span>
-                <span><input type="radio" name="rating" id="str6" value="6"><label for="str6"></label></span>
-                <span><input type="radio" name="rating" id="str5" value="5"><label for="str5"></label></span>
-                <span><input type="radio" name="rating" id="str4" value="4"><label for="str4"></label></span>
-                <span><input type="radio" name="rating" id="str3" value="3"><label for="str3"></label></span>
-                <span><input type="radio" name="rating" id="str2" value="2"><label for="str2"></label></span>
-                <span><input type="radio" name="rating" id="str1" value="1"><label for="str1"></label></span>
+            <div class="row"  >
+                <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
+                    <img src="https://image.tmdb.org/t/p/w200/{{movie.poster_path}}" >
+                </div>
+                <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
+                    <h2>{{movie.title}}</h2>
+                    <a href="https://www.youtube.com/watch?v={{trailer.key}}"> Bande Annonce </a>
+                    <p>{{movie.overview}}</p>
+                </div>
             </div>
-        </form>
+        </div>
+
+        <div class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
+            <h2>Note</h2>
+            <span style="color:white;">{{rating}}/10</span>
+            {% if is_granted('ROLE_USER') %}
+                <form action="{{ path('rating_rate',{id:movie.id})}}" method="post" id="ratingForm">
+                    <div class="rating">
+                        <span><input type="radio" name="rating" id="str10" value="10"><label for="str10"></label></span>
+                        <span><input type="radio" name="rating" id="str9" value="9"><label for="str9"></label></span>
+                        <span><input type="radio" name="rating" id="str8" value="8"><label for="str8"></label></span>
+                        <span><input type="radio" name="rating" id="str7" value="7"><label for="str7"></label></span>
+                        <span><input type="radio" name="rating" id="str6" value="6"><label for="str6"></label></span>
+                        <span><input type="radio" name="rating" id="str5" value="5"><label for="str5"></label></span>
+                        <span><input type="radio" name="rating" id="str4" value="4"><label for="str4"></label></span>
+                        <span><input type="radio" name="rating" id="str3" value="3"><label for="str3"></label></span>
+                        <span><input type="radio" name="rating" id="str2" value="2"><label for="str2"></label></span>
+                        <span><input type="radio" name="rating" id="str1" value="1"><label for="str1"></label></span>
+                    </div>
+                </form>
+            {% endif %}
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
         <style>
             .rating {
                 float:left;
@@ -65,6 +81,8 @@
                 color:#FFF;
             }
         </style>
+
+
         <script>
             $(document).ready(function(){
                 $(".rating input:radio").attr("checked", false);
@@ -86,6 +104,6 @@
 
 
 
-    {% endif %}
+
 
 {% endblock %}

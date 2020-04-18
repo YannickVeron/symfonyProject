@@ -18,7 +18,7 @@ class MovieController extends AbstractController
     public function index(EntityManagerInterface $entityManager)
     {
         $client = HttpClient::create();
-        $secret= "bd82375e7c1cff98c99e53e41e9a2638";
+        $secret= "";
         $link = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
         $response = $client->request('GET', $link);
 
@@ -49,7 +49,7 @@ class MovieController extends AbstractController
 
         $avgScore = $queryAvgRating->getSingleResult();
         $client = HttpClient::create();
-        $secret= "bd82375e7c1cff98c99e53e41e9a2638";//to move elsewhere, .env maybe ?
+        $secret= "";//to move elsewhere, .env maybe ?
         $link = "https://api.themoviedb.org/3/movie/".$id."?api_key=".$secret."&language=fr-FR";
         $response = $client->request('GET', $link);
         $content = $response->toArray();

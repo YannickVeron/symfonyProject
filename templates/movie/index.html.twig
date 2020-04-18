@@ -2,25 +2,35 @@
 {% block body %}
 
 
-                <h2>Movies</h2>
-            <ul>
-                {%for movie in movies %}
-
-
-                    <div class="card" style="width: 18rem;">
-                        <div class="card-body">
-                            <img src="https://image.tmdb.org/t/p/w200/{{movie.poster_path}}" >
-                            <h5 class="card-title"><p>{{movie.title}}</p></h5>
-                            <a class="btn btn-primary" href="{{ path('movie_show',{id:movie.id,name:movie.title}) }}">Detail</a>
-
+    <div class="row"  >
+        <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
+            <div id="suggestion">
+                <h2>Discover</h2>
+                <ul>
+                    {%for movie in movies %}
+                        <div class="card" >
+                            <div class="card-body">
+                                <img src="https://image.tmdb.org/t/p/w200/{{movie.poster_path}}" >
+                                <h5 class="card-title"><p>{{movie.title}}</p></h5>
+                                <a class="btn btn-primary" href="{{ path('movie_show',{id:movie.id,name:movie.title}) }}">Detail</a>
+                            </div>
                         </div>
-                    </div>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
 
-                {% endfor %}
-            </ul>
+        <div class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
+            <h2>Research</h2>
 
+        </div>
+    </div>
 
+    <script>
+        $(document).ready(function(){
 
+        });
+    </script>
 
 
 

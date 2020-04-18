@@ -1,8 +1,59 @@
 body {
     text-align:center;
-    padding:0;
-    margin:0;
     font-family:sans-serif;
     scroll-behavior: smooth;
     background-color:black;
 }
+
+.container-fluid{
+    height:85vh;
+}
+
+a{
+    color:red;
+}
+header{
+    height:15vh;
+    background-color:black;
+    text-align:center;
+}
+
+h1{
+    font-family: "Courier New", Courier, monospace;
+    font-size: 60px;
+    letter-spacing: -3.4px;
+    word-spacing: 0px;
+    color: #000000;
+    font-weight: 700;
+    text-decoration: rgb(68, 68, 68);
+    font-style: normal;
+    font-variant: normal;
+    text-transform: capitalize;
+    color:white;
+}
+
+h2{
+    font-family: "Courier New", Courier, monospace;
+    font-size: 45px;
+    letter-spacing: -3.4px;
+    word-spacing: 0px;
+    color: #000000;
+    font-weight: 700;
+    text-decoration: rgb(68, 68, 68);
+    font-style: normal;
+    font-variant: normal;
+    text-transform: capitalize;
+    color:red;
+}
+
+p{
+    color:white;
+    font-size: 15px;
+}
+
+#suggestion{
+    overflow-y: scroll;
+    overflow-x: scroll;
+    height:100vh;
+}
+
