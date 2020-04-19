@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-
     <div class="row"  >
         <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
 
@@ -15,7 +14,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
             <h2>Note</h2>
             <span style="color:white;">{{rating}}/10</span>
@@ -34,83 +32,85 @@
                         <span><input type="radio" name="rating" id="str1" value="1"><label for="str1"></label></span>
                     </div>
                 </form>
-
-
                 {{ form(formComment) }}
-
             {% endif %}
-
-
-
-
+            {%for comment in comments %}
+                <div class="comment">
+                    <div class="comment-owner">{{comment.user.email}}</div>
+                    <div>{{comment.text}}</div>
+                    <button class="btn btn-secondary" type="button" onclick="replyTo({{comment.id}},'{{comment.user.email}}')">Reply</button>
+                    {%for replyComment in comment.getComments %}
+                    <div class="comment-reply">
+                        <div class="comment-owner">{{replyComment.user.email}}</div>
+                        <div>{{replyComment.text}}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
         </div>
     </div>
+    <style>
+        .rating {
+            float:left;
+        }
+        .rating span { float:right; position:relative; }
+        .rating span input {
+            position:absolute;
+            top:0px;
+            left:0px;
+            opacity:0;
+        }
+        .rating span label {
+            display:inline-block;
+            width:30px;
+            height:30px;
+            text-align:center;
+            color:#FFF;
+            background:#ccc;
+            font-size:30px;
+            margin-right:2px;
+            line-height:30px;
+            border-radius:50%;
+            -webkit-border-radius:50%;
+        }
+        .rating span:hover ~ span label,
+        .rating span:hover label,
+        .rating span.checked label,
+        .rating span.checked ~ span label {
+            background:#F90;
+            color:#FFF;
+        }
+        .comment{
+            color:#FFF;
+            background-color:#222;
+            text-align:left;
+            padding-left:5%;
+            padding-bottom:10px;;
+        }
+        .comment-owner{
+            font-weight:bolder;
+        }
+        .comment-reply{
+            background-color:#333;
+        }
+    </style>
+    <script>
+        $(document).ready(function(){
+            $(".rating input:radio").attr("checked", false);
 
-
-
-
-
-
-
-
-
-
-
-        <style>
-            .rating {
-                float:left;
-            }
-            .rating span { float:right; position:relative; }
-            .rating span input {
-                position:absolute;
-                top:0px;
-                left:0px;
-                opacity:0;
-            }
-            .rating span label {
-                display:inline-block;
-                width:30px;
-                height:30px;
-                text-align:center;
-                color:#FFF;
-                background:#ccc;
-                font-size:30px;
-                margin-right:2px;
-                line-height:30px;
-                border-radius:50%;
-                -webkit-border-radius:50%;
-            }
-            .rating span:hover ~ span label,
-            .rating span:hover label,
-            .rating span.checked label,
-            .rating span.checked ~ span label {
-                background:#F90;
-                color:#FFF;
-            }
-        </style>
-
-
-        <script>
-            $(document).ready(function(){
-                $(".rating input:radio").attr("checked", false);
-
-                $('.rating input').click(function () {
-                    $(".rating span").removeClass('checked');
-                    $(this).parent().addClass('checked');
-                });
-
-                $('input:radio').change(function(){
-                    $("#ratingForm").submit();
-                });
+            $('.rating input').click(function () {
+                $(".rating span").removeClass('checked');
+                $(this).parent().addClass('checked');
             });
-        </script>
 
-
-
-
-
-
-
-
-
+            $('input:radio').change(function(){
+                $("#ratingForm").submit();
+            });
+        });
+        function replyTo(id,user){
+            $("#form_replyToId").val(id);
+            $("#form_text").val("@"+user+" ");
+            $("#form_text").focus();
+        }
+    </script>
 {% endblock %}
