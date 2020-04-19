@@ -9,6 +9,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpClient\HttpClient;
 use App\Entity\Rating;
+use App\Entity\Comment;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\formulaire\FormComment;
+
+
+
 
 class MovieController extends AbstractController
 {
@@ -17,28 +25,21 @@ class MovieController extends AbstractController
      */
     public function index(EntityManagerInterface $entityManager)
     {
+        // request HTTP / API MovieDB
         $client = HttpClient::create();
         $secret= "";
         $link = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
         $response = $client->request('GET', $link);
-
         $statusCode = $response->getStatusCode();
         $contentType = $response->getHeaders()['content-type'][0];
         $content = $response->toArray();
-
-
-
-
-
-
-
         return $this->render("movie/index.html.twig",["movies"=>$content["results"]]);
     }
 
     /**
      * @Route("/show/{id}-{name}", name="movie_show")
      */
-    public function show(int $id, EntityManagerInterface $entityManager)
+    public function show(int $id, EntityManagerInterface $entityManager, Request $request)
     {
         $ratingRepo = $entityManager->getRepository(Rating::class);
         $queryAvgRating = $ratingRepo->createQueryBuilder('g')
@@ -46,8 +47,19 @@ class MovieController extends AbstractController
             ->where('g.movieId = :idMovie')
             ->setParameter('idMovie', $id)
             ->getQuery();
-
         $avgScore = $queryAvgRating->getSingleResult();
+
+        // Formulaire commentaire
+        $comment = new Comment();
+        $comment->setText('Commentaire');
+        $formComment = $this->createFormBuilder($comment)
+            ->add('text', TextType::class)
+            ->add('save', SubmitType::class)
+            ->getForm();
+
+
+
+        // request HTTP / API MovieDB
         $client = HttpClient::create();
         $secret= "";//to move elsewhere, .env maybe ?
         $link = "https://api.themoviedb.org/3/movie/".$id."?api_key=".$secret."&language=fr-FR";
@@ -62,6 +74,6 @@ class MovieController extends AbstractController
         $c = $trailer['results'][0];
 
 
-        return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$c ]);
+        return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$c , "formComment"=>  $formComment->createView()  ]);
     }
 }

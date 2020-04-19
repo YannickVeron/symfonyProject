@@ -10,7 +10,7 @@
                 </div>
                 <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
                     <h2>{{movie.title}}</h2>
-                    <a href="https://www.youtube.com/watch?v={{trailer.key}}"> Bande Annonce </a>
+                    <a href="https://www.youtube.com/watch?v={{trailer.key}}"> <span class="glyphicon glyphicon-step-forward"></span>  Trailer </a>
                     <p>{{movie.overview}}</p>
                 </div>
             </div>
@@ -35,6 +35,10 @@
                     </div>
                 </form>
             {% endif %}
+
+
+
+            {{ form(formComment) }}
 
         </div>
     </div>

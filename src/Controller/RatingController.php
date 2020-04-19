@@ -20,8 +20,9 @@ class RatingController extends AbstractController
      */
     public function rate(int $id,Request $request, EntityManagerInterface $entityManager)
     {
-        //si l'utilisateur es connecter il peut effectuer peu donenr uen notes
+        //si l'utilisateur es connecter il peut donner une notes
         $this->denyAccessUnlessGranted('ROLE_USER', null, 'Please connection');
+
         $userRepo = $entityManager->getRepository(User::class);
         $user = $this->getUser();
         $ratingRepo = $entityManager->getRepository(Rating::class);
