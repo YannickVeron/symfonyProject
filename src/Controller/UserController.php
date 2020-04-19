@@ -12,6 +12,10 @@ use App\Entity\User;
 use App\Form\UserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpClient\HttpClient;
+
+
 
 
 class UserController extends AbstractController
@@ -48,9 +52,25 @@ class UserController extends AbstractController
                 'form' => $form->createView(),
             ]
         );
-
-
     }
+    /**
+     * @Route("/user/show/{id}", name="user_show")
+     */
+    public function show(Int $id, EntityManagerInterface $entityManager): Response
+    {
+        $userRepo = $entityManager->getRepository(User::class);
+        $user = $userRepo->find($id);
+        $ratings = $user->getRatings();
+        $client = HttpClient::create();
+        $secret= "key";//to move elsewhere, .env maybe ?
 
-
+        $movies = [];
+        foreach($ratings as $key=>$rating){
+            $link = "https://api.themoviedb.org/3/movie/".$rating->getMovieId()."?api_key=".$secret."&language=fr-FR";
+            $response = $client->request('GET', $link);
+            $content = $response->toArray();
+            $movies[]=["rating"=>$rating,"movie"=>$content];
+        }
+        return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies]);
+    }
 }

@@ -124,6 +124,11 @@ class User implements UserInterface
     private $comments;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Friend", mappedBy="user", orphanRemoval=true)
+     */
+    private $friends;
+
+    /**
      * @return Collection|Rating[]
      */
     public function getRatings(): Collection
@@ -195,5 +200,37 @@ class User implements UserInterface
     {
         $this->ratings = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->friends = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection|Friend[]
+     */
+    public function getFriends(): Collection
+    {
+        return $this->friends;
+    }
+
+    public function addFriend(Friend $friend): self
+    {
+        if (!$this->friends->contains($friend)) {
+            $this->friends[] = $friend;
+            $friend->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFriend(Friend $friend): self
+    {
+        if ($this->friends->contains($friend)) {
+            $this->friends->removeElement($friend);
+            // set the owning side to null (unless already changed)
+            if ($friend->getUser() === $this) {
+                $friend->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

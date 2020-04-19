@@ -36,7 +36,9 @@
             {% endif %}
             {%for comment in comments %}
                 <div class="comment">
-                    <div class="comment-owner">{{comment.user.email}}</div>
+                    <div class="comment-owner">
+                        <a class="profile-link" href="{{ path('user_show',{id:comment.user.id,}) }}">{{comment.user.email}}</a>
+                    </div>
                     <div>{{comment.text}}</div>
                     <button class="btn btn-secondary" type="button" onclick="replyTo({{comment.id}},'{{comment.user.email}}')">Reply</button>
                     {%for replyComment in comment.getComments %}
@@ -92,6 +94,9 @@
         }
         .comment-reply{
             background-color:#333;
+        }
+        .profile-link{
+            color:#FFF;
         }
     </style>
     <script>
