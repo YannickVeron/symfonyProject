@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpClient\HttpClient;
 use App\Entity\Rating;
 use App\Entity\Comment;
+
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -49,6 +50,8 @@ class MovieController extends AbstractController
             ->getQuery();
         $avgScore = $queryAvgRating->getSingleResult();
 
+        // récupère user connecter
+        $user = $this->getUser();
         // Formulaire commentaire
         $comment = new Comment();
         $comment->setText('Commentaire');
@@ -57,6 +60,15 @@ class MovieController extends AbstractController
             ->add('save', SubmitType::class)
             ->getForm();
 
+        // Lors d'un envoie du formulaire on récupère les données
+        $formComment->handleRequest($request);
+        if ($formComment->isSubmitted() && $formComment->isValid()) {
+            $comment->setUser($user);
+            $comment->setMovieId($id);
+            $entityManager->persist($comment);
+            $entityManager->flush();
+            return $this->redirectToRoute('movie_index');
+        }
 
 
         // request HTTP / API MovieDB

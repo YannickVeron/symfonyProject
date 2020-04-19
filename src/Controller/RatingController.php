@@ -30,6 +30,7 @@ class RatingController extends AbstractController
             'user' => $user,
             'movieId' => $id
         ]);
+
         if($rating==null){
             $rating = new Rating();
             $rating->setUser($user);
