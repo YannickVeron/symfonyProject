@@ -1,11 +1,51 @@
 {% extends 'base.html.twig' %}
+
+{% block javascripts %} 
+   <script language = "javascript">  
+      $(document).ready(function(){   
+         $("#loadmovies").on("click", function(event){  
+            $.ajax({  
+               url:        '/',  
+               type:       'POST',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {              
+                  for(i = 0; i < data.length; i++) {  
+                     movie = data[i];  
+                     var e = $('
+                        <li class="card">
+                            <div class="card-body">
+                                <img id="poster" src="">
+                                <h5 class="card-title">
+                                    <p></p>
+                                </h5>
+                            </div>
+                        </li>
+                    ');
+                     
+                     $('#poster', e).attr('src', "https://image.tmdb.org/t/p/w200/" + movie['poster_path']);  
+                     $('.card-title p', e).html(movie['title']);   
+                     $('.filtered-movies').append(e);  
+                  }  
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+         });  
+      });  
+   </script> 
+{% endblock %} 
+
 {% block body %}
+    {% block index_stylesheet %}{% endblock %}
     <div class="row"  >
         <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
             <div id="suggestion">
                 <h2>Discover</h2>
                 <ul>
-                    {%for movie in movies %}
+                    {% for movie in movies %}
                         <div class="card" >
                             <div class="card-body">
                                 <img src="https://image.tmdb.org/t/p/w200/{{movie.poster_path}}" >
@@ -19,12 +59,63 @@
         </div>
 
         <div class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
-            <h2>Research</h2>
+            {% block movie_filtered %}
+                <h2>Research</h2>
+                    <div id="research-menu">
+                    <!-- Le label -->
+                    <label for="toggle-block">Catégories</label>
+                
+                    <!-- La checkbox que je choisis cochée au démarrage -->
+                    <input id="toggle-block" name="toggle-block" type="checkbox" checked />
+                
+                    <!-- Le bloc à afficher -->
+                    <div id="category-block">
+                        <ul>
+                            {% for category in categories %}
+                                <li class="category-item">
+                                    {{ category }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <a id = "loadmovies" href = "#">Load movies</a>  
+                </br> 
+                </br>  
+                
+                <div class="filtered-movies"></div> 
+            {% endblock %}
         </div>
     </div>
-    <script>
-        $(document).ready(function(){
+    {% block javascript %}{% endblock %}
+{% endblock %}
 
-        });
-    </script>
+{% block index_stylesheet %}
+    <style>
+        #research-menu {
+            background-color: #e95325;
+            color: #fff;
+            text-align:center;
+            width: 250px;
+        }
+        #research-menu label {
+            cursor:pointer;
+        }
+        /* le bloc n'est pas visible lorsque la checkbox n'est pas cochée */
+        #category-block {
+            max-height: 0px;
+            opacity: 0;
+            line-height:100px;
+            border: 1px dotted #fff;
+            margin:2px;
+            transition: all 1s;
+        }
+        
+        /* le bloc est visible lorsque la checkbox est cochée */
+        #toggle-block:checked + #category-block{
+            max-height: 300px;
+            opacity: 1;
+            transition: all 1s;
+        }
+    </style>
 {% endblock %}

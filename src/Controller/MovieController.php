@@ -26,17 +26,33 @@ class MovieController extends AbstractController
     /**
      * @Route("/", name="movie_index")
      */
-    public function index(EntityManagerInterface $entityManager)
+    public function index(EntityManagerInterface $entityManager, Request $request)
     {
         // request HTTP / API MovieDB
         $client = HttpClient::create();
         $secret= "key";
-        $link = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
-        $response = $client->request('GET', $link);
-        $statusCode = $response->getStatusCode();
-        $contentType = $response->getHeaders()['content-type'][0];
-        $content = $response->toArray();
-        return $this->render("movie/index.html.twig",["movies"=>$content["results"]]);
+
+        $categories = $entityManager->getRepository(Category::class)->findAll();
+        
+        if ($request->isXmlHttpRequest() || $request->query->get('showJson') == 1) {  
+            $link = 'https://api.themoviedb.org/3/discover/movie&category=thriller?api_key='.$secret;
+
+            $response = $client->request('GET', $link);
+            $statusCode = $response->getStatusCode();
+            $contentType = $response->getHeaders()['content-type'][0];
+            $content = $response->toArray();
+
+            return $this->render('movie/index.html.twig',["movies"=>$content, "categories"=>$categories]); 
+        } else { 
+            $link = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
+
+            $response = $client->request('GET', $link);
+            $statusCode = $response->getStatusCode();
+            $contentType = $response->getHeaders()['content-type'][0];
+            $content = $response->toArray();
+
+            return $this->render('movie/index.html.twig',["movies"=>$content, "categories"=>$categories]); 
+        }
     }
 
     /**
@@ -95,5 +111,5 @@ class MovieController extends AbstractController
         $c = $trailer['results'][0];
 
         return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$c , "formComment"=>  $formComment->createView(),"comments"=>$comments]);
-    }
+    }    
 }
