@@ -3,7 +3,8 @@
 {% block javascripts %} 
    <script language = "javascript">  
       $(document).ready(function(){   
-         $("#loadmovies").on("click", function(event){  
+         $(".category-item").on("click", function(event){  
+            // recupérer l'id de la cat
             $.ajax({  
                url:        '/',  
                type:       'POST',   
@@ -49,8 +50,10 @@
                         <div class="card" >
                             <div class="card-body">
                                 <img src="https://image.tmdb.org/t/p/w200/{{movie.poster_path}}" >
-                                <h5 class="card-title"><p>{{movie.title}}</p></h5>
-                                <a class="btn btn-primary" href="{{ path('movie_show',{id:movie.id,name:movie.title}) }}">Detail</a>
+                                <h5 class="card-title">
+                                    <p> {{ movie.title }} </p>
+                                </h5>
+                                <a class="btn btn-primary" href="{{ path('movie_show',{id:movie.id,name:movie.title}) }}"> Detail </a>
                             </div>
                         </div>
                     {% endfor %}
@@ -63,7 +66,7 @@
                 <h2>Research</h2>
                     <div id="research-menu">
                     <!-- Le label -->
-                    <label for="toggle-block">Catégories</label>
+                    <label for="toggle-block"> Catégories </label>
                 
                     <!-- La checkbox que je choisis cochée au démarrage -->
                     <input id="toggle-block" name="toggle-block" type="checkbox" checked />
@@ -73,12 +76,13 @@
                         <ul>
                             {% for category in categories %}
                                 <li class="category-item">
-                                    {{ category }}
+                                    {{ "id: " + category.id + " name: " + category.name }}
                                 </li>
                             {% endfor %}
                         </ul>
                     </div>
                 </div>
+
                 <a id = "loadmovies" href = "#">Load movies</a>  
                 </br> 
                 </br>  

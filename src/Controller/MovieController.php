@@ -26,32 +26,37 @@ class MovieController extends AbstractController
     /**
      * @Route("/", name="movie_index")
      */
-    public function index(EntityManagerInterface $entityManager, Request $request)
+    public function index(Request $request)
     {
         // request HTTP / API MovieDB
         $client = HttpClient::create();
         $secret= "key";
 
-        $categories = $entityManager->getRepository(Category::class)->findAll();
+        $linkCategories = 'https://api.themoviedb.org/3/discover/genre/movie/list?api_key='.$secret.'&language=fr-FR';
+
+        $response = $client->request('GET', $link);
+        $statusCode = $response->getStatusCode();
+        $contentType = $response->getHeaders()['content-type'][0];
+        $content = $response->toArray();
         
         if ($request->isXmlHttpRequest() || $request->query->get('showJson') == 1) {  
-            $link = 'https://api.themoviedb.org/3/discover/movie&category=thriller?api_key='.$secret;
+            $linkMovies = 'https://api.themoviedb.org/3/discover/movie?api_key='.$secret.'&language=fr-FR&with_genres=';
+            
+            $responseMovies = $client->request('GET', $link);
+            $statusCodeMovies = $response->getStatusCode();
+            $contentTypeMovies = $response->getHeaders()['content-type'][0];
+            $contentMovies = $response->toArray();
 
-            $response = $client->request('GET', $link);
-            $statusCode = $response->getStatusCode();
-            $contentType = $response->getHeaders()['content-type'][0];
-            $content = $response->toArray();
-
-            return $this->render('movie/index.html.twig',["movies"=>$content, "categories"=>$categories]); 
+            return $this->render('movie/index.html.twig',["movies"=>$contentMovies, "categories"=>$categories]); 
         } else { 
-            $link = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
+            $linkMovies = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
 
-            $response = $client->request('GET', $link);
-            $statusCode = $response->getStatusCode();
-            $contentType = $response->getHeaders()['content-type'][0];
-            $content = $response->toArray();
+            $responseMovies = $client->request('GET', $link);
+            $statusCodeMovies = $response->getStatusCode();
+            $contentTypeMovies = $response->getHeaders()['content-type'][0];
+            $contentMovies = $response->toArray();
 
-            return $this->render('movie/index.html.twig',["movies"=>$content, "categories"=>$categories]); 
+            return $this->render('movie/index.html.twig',["movies"=>$contentMovies, "categories"=>$categories]); 
         }
     }
 
