@@ -61,6 +61,7 @@ class UserController extends AbstractController
         $userRepo = $entityManager->getRepository(User::class);
         $user = $userRepo->find($id);
         $ratings = $user->getRatings();
+        $comments = $user->getComments();
         $client = HttpClient::create();
         $secret= "key";//to move elsewhere, .env maybe ?
 
@@ -71,6 +72,23 @@ class UserController extends AbstractController
             $content = $response->toArray();
             $movies[]=["rating"=>$rating,"movie"=>$content];
         }
-        return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies]);
+
+
+        // Obtenir la liste des commentaires Fasers
+        $moviesComments = [];
+        foreach($comments as $key=>$comment){
+            // test obligatoires car on souhaite obtenir directement les commentaires sur le films (1er degrées)
+            $firstDegrade = $comment->getReplyTo();
+            if( $firstDegrade == null ){
+                $link = "https://api.themoviedb.org/3/movie/".$comment->getMovieId()."?api_key=".$secret."&language=fr-FR";
+                $response = $client->request('GET', $link);
+                $content = $response->toArray();
+
+                $moviesComments[]=["comment"=>$comment,"movie"=>$content];
+            }
+        }
+
+
+        return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies, "movieComments"=> $moviesComments ]);
     }
 }
