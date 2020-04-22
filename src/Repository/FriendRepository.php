@@ -47,4 +47,11 @@ class FriendRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function hasFriend($user, $friend){
+        return $this->findOneBy([
+            'user' =>$user,
+            'friend' =>$friend
+        ]);
+    }
 }

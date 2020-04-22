@@ -9,13 +9,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\User;
+use App\Entity\Friend;
 use App\Form\UserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpClient\HttpClient;
-
-
 
 
 class UserController extends AbstractController
@@ -59,11 +58,12 @@ class UserController extends AbstractController
     public function show(Int $id, EntityManagerInterface $entityManager): Response
     {
         $userRepo = $entityManager->getRepository(User::class);
+        $friendRepo = $entityManager->getRepository(Friend::class);
         $user = $userRepo->find($id);
+        $isFriend = ($friendRepo->hasFriend($this->getUser(),$user) != null);
         $ratings = $user->getRatings();
         $client = HttpClient::create();
-        $secret= "key";//to move elsewhere, .env maybe ?
-
+        $secret= "bc1c540985c64209509d0beaecc09fa5";//to move elsewhere, .env maybe ?
         $movies = [];
         foreach($ratings as $key=>$rating){
             $link = "https://api.themoviedb.org/3/movie/".$rating->getMovieId()."?api_key=".$secret."&language=fr-FR";
@@ -71,6 +71,6 @@ class UserController extends AbstractController
             $content = $response->toArray();
             $movies[]=["rating"=>$rating,"movie"=>$content];
         }
-        return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies]);
+        return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies,'isFriend'=>$isFriend]);
     }
 }
