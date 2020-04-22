@@ -62,8 +62,10 @@ class UserController extends AbstractController
         $user = $userRepo->find($id);
         $isFriend = ($friendRepo->hasFriend($this->getUser(),$user) != null);
         $ratings = $user->getRatings();
+        $comments = $user->getComments();
         $client = HttpClient::create();
-        $secret= "bc1c540985c64209509d0beaecc09fa5";//to move elsewhere, .env maybe ?
+        $secret= "key";//to move elsewhere, .env maybe ?
+
         $movies = [];
         foreach($ratings as $key=>$rating){
             $link = "https://api.themoviedb.org/3/movie/".$rating->getMovieId()."?api_key=".$secret."&language=fr-FR";
@@ -71,6 +73,23 @@ class UserController extends AbstractController
             $content = $response->toArray();
             $movies[]=["rating"=>$rating,"movie"=>$content];
         }
-        return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies,'isFriend'=>$isFriend]);
+
+
+        // Obtenir la liste des commentaires Fasers
+        $moviesComments = [];
+        foreach($comments as $key=>$comment){
+            // test obligatoires car on souhaite obtenir directement les commentaires sur le films (1er degrées)
+            $firstDegrade = $comment->getReplyTo();
+            if( $firstDegrade == null ){
+                $link = "https://api.themoviedb.org/3/movie/".$comment->getMovieId()."?api_key=".$secret."&language=fr-FR";
+                $response = $client->request('GET', $link);
+                $content = $response->toArray();
+
+                $moviesComments[]=["comment"=>$comment,"movie"=>$content];
+            }
+        }
+
+
+        return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies, "movieComments"=> $moviesComments ]);
     }
 }
