@@ -73,4 +73,9 @@ class Friend
 
         return $this;
     }
+
+    public function __toString(): String
+    {
+        return "User_".$this->getUser()->getId()."-Friend_".$this->getFriend()->getId();
+    }
 }
