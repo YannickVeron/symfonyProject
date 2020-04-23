@@ -2,7 +2,7 @@
 {% block body %}
 
     <div id="info" class="row">
-        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
             <h2> Where IS ? </h2>
            <table>
                 <tr>
@@ -19,8 +19,23 @@
                 </tr>
             </table>
         </div>
-    </div>
 
+
+
+        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
+        
+            <form>
+                <label for="researchUser">Un Nouvelle amie ?</label>
+                <input type="text" id="valueUser" name="researchUser" >
+                 <button class="btn btn-secondary" id="researchUser" type="button">Research</button>
+            </form>
+
+            <div id="listUsersResearch">
+
+            </div>
+        </div>
+
+    </div>
 
 
 
@@ -57,4 +72,33 @@
             color:#EEE;
         }
     </style>
+     
+   
+    <script>
+        $(document).ready(function(){
+            $('#researchUser').on('click', function(){
+                $.ajax({
+                    url: '{{ path('ajax_action') }}',
+                    type: "POST",
+                    dataType: "json", data: { "research": $('#valueUser').val()},
+                    async: true,
+                    success: function (data) {
+                        var comp = 0;
+                        var htmlListUsers ='';
+                        while (comp < data.info.length ) {
+                            htmlListUsers += '<a href="/user/show/'+ data.info[comp].id +'"> email : '+ data.info[comp].email +'  </a> <br>' ;
+                            comp++;
+                        }
+                        $('#listUsersResearch').html(htmlListUsers);
+                    }
+                })
+            });
+        });
+    </script>
+
+
+
+
+
+
 {% endblock %}

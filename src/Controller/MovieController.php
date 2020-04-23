@@ -30,7 +30,7 @@ class MovieController extends AbstractController
     {
         // request HTTP / API MovieDB
         $client = HttpClient::create();
-        $secret= "key";
+        $secret= "da5b97985e7eecf038bfe56692c12133";
         $link = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
         $response = $client->request('GET', $link);
         $statusCode = $response->getStatusCode();
@@ -84,7 +84,7 @@ class MovieController extends AbstractController
 
         // request HTTP / API MovieDB
         $client = HttpClient::create();
-        $secret= "key";//to move elsewhere, .env maybe ?
+        $secret= "da5b97985e7eecf038bfe56692c12133";//to move elsewhere, .env maybe ?
         $link = "https://api.themoviedb.org/3/movie/".$id."?api_key=".$secret."&language=fr-FR";
         $response = $client->request('GET', $link);
         $content = $response->toArray();
