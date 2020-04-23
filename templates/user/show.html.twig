@@ -23,24 +23,6 @@
 
 
         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
-        
-            <form>
-                <label for="researchUser">Un Nouvelle amie ?</label>
-                <input type="text" id="valueUser" name="researchUser" >
-                 <button class="btn btn-secondary" id="researchUser" type="button">Research</button>
-            </form>
-
-            <div id="listUsersResearch">
-
-            </div>
-        </div>
-
-    </div>
-
-
-
-    <div id="info" class="row">
-        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
             <span>{{user.email}}</span>
             {% if is_granted('IS_AUTHENTICATED_REMEMBERED') and app.user!=user %}
                 {% if isFriend != null %}
@@ -49,6 +31,15 @@
                     <a class="btn btn-primary" href="{{ path('friend_add',{userid:user.id})}}">Add friend</a>
                 {% endif %}
             {% endif %}
+        </div>
+
+    </div>
+
+
+
+    <div id="info" class="row">
+        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
+
             <h2> Rates </h2>
             {%for entry in movies %}
                 <div class="row">
@@ -82,25 +73,5 @@
     </style>
      
    
-    <script>
-        $(document).ready(function(){
-            $('#researchUser').on('click', function(){
-                $.ajax({
-                    url: '{{ path('ajax_action') }}',
-                    type: "POST",
-                    dataType: "json", data: { "research": $('#valueUser').val()},
-                    async: true,
-                    success: function (data) {
-                        var comp = 0;
-                        var htmlListUsers ='';
-                        while (comp < data.info.length ) {
-                            htmlListUsers += '<a href="/user/show/'+ data.info[comp].id +'"> email : '+ data.info[comp].email +'  </a> <br>' ;
-                            comp++;
-                        }
-                        $('#listUsersResearch').html(htmlListUsers);
-                    }
-                })
-            });
-        });
-    </script>
+    
 {% endblock %}

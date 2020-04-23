@@ -89,11 +89,24 @@ class MovieController extends AbstractController
         $response = $client->request('GET', $link);
         $content = $response->toArray();
 
+        // Request for Trailler
         $links = "https://api.themoviedb.org/3/movie/".$id."/videos?api_key=".$secret."&language=fr-FR";
         $responses = $client->request('GET', $links);
         $trailer=  $responses->toArray();
-        $c = $trailer['results'][0];
+        // test if we get the trailer well
+        if(! empty($trailer['results'][0])) { // take the first trailer
+            $bandeAnnonce = $trailer['results'][0]; 
+        }else{
+            $bandeAnnonce = array(
+                "key" => "notrailer",
+            );
+        }
 
-        return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$c , "formComment"=>  $formComment->createView(),"comments"=>$comments]);
+        // list of films in the same category
+        $linkeCategorie = "https://api.themoviedb.org/3/movie/".$id."/similar?api_key=".$secret."&language=fr&page=1";
+        $responseCategorie = $client->request('GET', $linkeCategorie);
+        $listMovieCategorie =  $responseCategorie->toArray();
+
+        return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$bandeAnnonce , "formComment"=>  $formComment->createView(),"comments"=>$comments, "listMovieCategorie"=>$listMovieCategorie['results']    ]);
     }
 }
