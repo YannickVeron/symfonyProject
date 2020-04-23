@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class UserController extends AbstractController
@@ -37,14 +38,11 @@ class UserController extends AbstractController
             $user->setPassword(
                 $passwordEncoder->encodePassword($user, $form->get('password')->getData())
             );
-
             $user->setRoles(array('ROLE_ADMIN'));
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
-
             return $this->redirectToRoute('app_login'  );
-
         }
 
         return $this->render("security/inscription.html.twig", [
@@ -57,6 +55,8 @@ class UserController extends AbstractController
      */
     public function show(Int $id, EntityManagerInterface $entityManager): Response
     {
+        
+
         $userRepo = $entityManager->getRepository(User::class);
         $friendRepo = $entityManager->getRepository(Friend::class);
         $user = $userRepo->find($id);
@@ -103,4 +103,46 @@ class UserController extends AbstractController
         $friends = $friendRepo->getFriends($user,'Accepted');
         return $this->render("user/edit.html.twig",["friendRequests"=>$friendRequests,"friends"=>$friends,'requestsSent'=>$requestsSent]);
     }
+
+
+
+    /**
+    * @Route("/ajax", name="ajax_action")
+    */
+    public function ajaxAction(Request $request, EntityManagerInterface $entityManager )
+    {
+        /* on récupère la valeur envoyée */
+        $research = $request->request->get('research');
+        if( 0 == 0 ){
+           
+            // Request who return array whitch response
+            $query = $entityManager->createQuery(
+                "SELECT u FROM App\Entity\User u WHERE u.email like :research " 
+            )->setParameter('research', "$research%");
+            $result = $query->getResult();
+
+              
+            // transform response for return Response
+            $researchUser = array();
+            foreach( $result as $user  ){
+                $researchUser[] =  $tabUser = array(
+                    "id"    => $user->getId(),
+                    "email"  => $user->getEmail(),
+                );
+            }
+              
+            $info =  $researchUser;
+        }
+
+        /* On renvoie une réponse encodée en JSON */
+        $response = new Response(json_encode(array(
+            'info' => $info
+        )));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+    }
+
+
+    
 }
