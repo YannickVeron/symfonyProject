@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<div>
+    <h3 style="font-weight:bold;">Amis</h3>
+    <div>
+        <h4>Mes Amis</h4>
+        {% for friend in friends %}
+            <div class="row">
+                {% if friend.user==app.user %}
+                    <div class="col-md-6"><a href="{{ path('user_show',{id:friend.friend.id}) }}">{{friend.friend.email}}</a></div>
+                {% else %}
+                    <div class="col-md-6"><a href="{{ path('user_show',{id:friend.user.id}) }}">{{friend.user.email}}</a></div>
+                {% endif %}
+                <div class="col-md-1"><a href="{{ path('friend_remove',{friend_id:friend.id}) }}" class="btn btn-danger">Retirer</a></div>
+            </div>
+        {% else %}
+            <div><i>Vous n'avez pas d'amis :(</i></div>
+        {% endfor %}
+    </div>
+    <div>
+        <h4>Demandes reçu</h4>
+        {% for request in friendRequests %}
+            <div class="row">
+                <div class="col-md-6"><a href="{{ path('user_show',{id:request.user.id}) }}">{{request.user.email}}</a></div>
+                <div class="col-md-1"><a href="{{ path('friend_accept',{request_id:request.id} )}}" class="btn btn-success">Accepter</a></div>
+                <div class="col-md-1"><a href="{{ path('friend_remove',{friend_id:request.id}) }}" class="btn btn-danger">Refuser</a></div>
+            </div>
+        {% else %}
+            <div><i>Pas de demande en attente</i></div>
+        {% endfor %}
+    </div>
+    <div>
+        <h4>Demandes envoyées</h4>
+        {% for request in requestsSent %}
+            <div class="row">
+                <div class="col-md-6"><a href="{{ path('user_show',{id:request.user.id}) }}">{{request.friend.email}}</a></div>
+                <div class="col-md-1"><a href="{{ path('friend_remove',{friend_id:request.id})}}" class="btn btn-danger">Annuler</a></div>
+            </div>
+        {% else %}
+            <div><i>Pas de demande en attente</i></div>
+        {% endfor %}
+    </div>
+</div>
+    
+{% endblock %}

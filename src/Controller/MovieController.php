@@ -30,7 +30,7 @@ class MovieController extends AbstractController
     {
         // request HTTP / API MovieDB
         $client = HttpClient::create();
-        $secret= "bc1c540985c64209509d0beaecc09fa5";
+        $secret= "key";
         $link = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
         $response = $client->request('GET', $link);
         $statusCode = $response->getStatusCode();
@@ -65,7 +65,7 @@ class MovieController extends AbstractController
             ->add('replyToId',HiddenType::class,["mapped" => false])
             ->getForm();
 
-        // Lors d'un envoie du formulaire on récupère les données
+        //Lors d'un envoie du formulaire on récupère les données
         $formComment->handleRequest($request);
         if ($formComment->isSubmitted() && $formComment->isValid()) {
             $comment->setUser($user);
@@ -84,7 +84,7 @@ class MovieController extends AbstractController
 
         // request HTTP / API MovieDB
         $client = HttpClient::create();
-        $secret= "bc1c540985c64209509d0beaecc09fa5";//to move elsewhere, .env maybe ?
+        $secret= "key";//to move elsewhere, .env maybe ?
         $link = "https://api.themoviedb.org/3/movie/".$id."?api_key=".$secret."&language=fr-FR";
         $response = $client->request('GET', $link);
         $content = $response->toArray();

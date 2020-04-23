@@ -60,7 +60,7 @@ class UserController extends AbstractController
         $userRepo = $entityManager->getRepository(User::class);
         $friendRepo = $entityManager->getRepository(Friend::class);
         $user = $userRepo->find($id);
-        $isFriend = ($friendRepo->hasFriend($this->getUser(),$user) != null);
+        $isFriend = $friendRepo->hasFriend($this->getUser(),$user);
         $ratings = $user->getRatings();
         $comments = $user->getComments();
         $client = HttpClient::create();
@@ -88,8 +88,19 @@ class UserController extends AbstractController
                 $moviesComments[]=["comment"=>$comment,"movie"=>$content];
             }
         }
+        return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies, "movieComments"=> $moviesComments, 'isFriend'=>$isFriend ]);
+    }
 
-
-        return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies, "movieComments"=> $moviesComments ]);
+    /**
+     * @Route("/user/edit", name="user_edit")
+     */
+    public function edit(EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        $friendRepo = $entityManager->getRepository(Friend::class);
+        $friendRequests = $friendRepo->findBy(['status' => "Pending",'friend'=>$user]);
+        $requestsSent = $friendRepo->findBy(['status' => "Pending",'user'=>$user]);
+        $friends = $friendRepo->getFriends($user,'Accepted');
+        return $this->render("user/edit.html.twig",["friendRequests"=>$friendRequests,"friends"=>$friends,'requestsSent'=>$requestsSent]);
     }
 }

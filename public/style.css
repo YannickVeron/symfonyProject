@@ -3,6 +3,7 @@ body {
     font-family:sans-serif;
     scroll-behavior: smooth;
     background-color:black;
+    color: #EEEEEE;
 }
 
 .container-fluid{

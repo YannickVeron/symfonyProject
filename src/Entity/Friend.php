@@ -31,7 +31,7 @@ class Friend
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $Status;
+    private $status;
 
     public function getId(): ?int
     {
@@ -64,12 +64,12 @@ class Friend
 
     public function getStatus(): ?string
     {
-        return $this->Status;
+        return $this->status;
     }
 
     public function setStatus(string $Status): self
     {
-        $this->Status = $Status;
+        $this->status = $Status;
 
         return $this;
     }

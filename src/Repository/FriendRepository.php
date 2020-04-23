@@ -48,10 +48,29 @@ class FriendRepository extends ServiceEntityRepository
     }
     */
 
-    public function hasFriend($user, $friend){
-        return $this->findOneBy([
+    public function hasFriend($user, $friend){//also include non accepted friend request.
+        $friend = $this->findOneBy([
             'user' =>$user,
             'friend' =>$friend
         ]);
+        if($friend == null){//if not find check inverse
+            return $this->findOneBy([
+                'user' =>$friend,
+                'friend' =>$user
+            ]);
+        }
+        return $friend;
+    }
+
+    public function getFriends($user,$status=""){
+        $statusFilter="";
+        if($status!=""){
+            $statusFilter=" AND f.status='".$status."'";
+        }
+        $query = $this->getEntityManager()
+        ->createQuery('SELECT f FROM App\Entity\Friend f WHERE ( f.user = :userId OR f.friend = :userId )'.$statusFilter)
+        ->setParameter('userId', $user->getId());
+        
+        return $query->getResult();
     }
 }

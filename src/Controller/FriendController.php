@@ -14,13 +14,13 @@ use App\Entity\User;
 class FriendController extends AbstractController
 {
     /**
-     * @Route("/friend/add/{id}", name="friend_add")
+     * @Route("/friend/add/{userid}", name="friend_add")
      */
-    public function add(int $id,EntityManagerInterface $entityManager):Response
+    public function add(int $userid,EntityManagerInterface $entityManager):Response
     {
         $userRepo = $entityManager->getRepository(User::class);
         $friendRepo = $entityManager->getRepository(Friend::class);
-        $userFriend = $userRepo->find($id);
+        $userFriend = $userRepo->find($userid);
         if($friendRepo->hasFriend($this->getUser(),$userFriend) == null){
             $friend = new Friend();
             $friend->setFriend($userFriend);
@@ -30,22 +30,34 @@ class FriendController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('user_show',['id'=>$id]); 
+        return $this->redirectToRoute('user_show',['id'=>$userid]); 
     }
 
     /**
-     * @Route("/friend/remove/{id}", name="friend_remove")
+     * @Route("/friend/remove/{friend_id}", name="friend_remove")
      */
-    public function remove(int $id,EntityManagerInterface $entityManager):Response
+    public function remove(int $friend_id,EntityManagerInterface $entityManager):Response
     {
-        $userRepo = $entityManager->getRepository(User::class);
         $friendRepo = $entityManager->getRepository(Friend::class);
-        $friend = $friendRepo->hasFriend($this->getUser(),$userRepo->find($id));
+        $friend = $friendRepo->find($friend_id);
         if($friend!=null){
             $entityManager->remove($friend);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('user_show',['id'=>$id]); 
+        return $this->redirectToRoute('movie_index'); 
+    }
+
+    /**
+     * @Route("/friend/accept/{request_id}", name="friend_accept")
+     */
+    public function accept($request_id,EntityManagerInterface $entityManager):Response
+    {
+        $friendRepo = $entityManager->getRepository(Friend::class);
+        $friendRequest = $friendRepo->find($request_id);
+        $friendRequest->setStatus("Accepted");
+        $entityManager->flush();
+
+        return $this->redirectToRoute('user_edit'); 
     }
 }

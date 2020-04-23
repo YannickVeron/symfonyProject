@@ -21,7 +21,7 @@
             <a href="/login" > Connection </a>
         [{% endif %}
         <a href="/admin" > Admin </a>
-        <span>{{app.user}}</span>
+        <a href="{{ path('user_edit')}}">{{app.user}}</a>
     </header>
 
     <body>
