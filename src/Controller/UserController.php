@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Entity\User;
 use App\Entity\Friend;
 use App\Form\UserType;
+use App\Service\APIManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 
@@ -53,27 +53,19 @@ class UserController extends AbstractController
     /**
      * @Route("/user/show/{id}", name="user_show")
      */
-    public function show(Int $id, EntityManagerInterface $entityManager): Response
+    public function show(Int $id, EntityManagerInterface $entityManager, APIManager $apiManager): Response
     {
-        
-
         $userRepo = $entityManager->getRepository(User::class);
         $friendRepo = $entityManager->getRepository(Friend::class);
         $user = $userRepo->find($id);
         $isFriend = $friendRepo->hasFriend($this->getUser(),$user);
         $ratings = $user->getRatings();
         $comments = $user->getComments();
-        $client = HttpClient::create();
-        $secret= "key";//to move elsewhere, .env maybe ?
 
         $movies = [];
         foreach($ratings as $key=>$rating){
-            $link = "https://api.themoviedb.org/3/movie/".$rating->getMovieId()."?api_key=".$secret."&language=fr-FR";
-            $response = $client->request('GET', $link);
-            $content = $response->toArray();
-            $movies[]=["rating"=>$rating,"movie"=>$content];
+            $movies[]=["rating"=>$rating,"movie"=>$apiManager->getMovie($rating->getMovieId())];
         }
-
 
         // Obtenir la liste des commentaires Fasers
         $moviesComments = [];
@@ -81,11 +73,7 @@ class UserController extends AbstractController
             // test obligatoires car on souhaite obtenir directement les commentaires sur le films (1er degrées)
             $firstDegrade = $comment->getReplyTo();
             if( $firstDegrade == null ){
-                $link = "https://api.themoviedb.org/3/movie/".$comment->getMovieId()."?api_key=".$secret."&language=fr-FR";
-                $response = $client->request('GET', $link);
-                $content = $response->toArray();
-
-                $moviesComments[]=["comment"=>$comment,"movie"=>$content];
+                $moviesComments[]=["comment"=>$comment,"movie"=>$apiManager->getMovie($comment->getMovieId())];
             }
         }
         return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies, "movieComments"=> $moviesComments, 'isFriend'=>$isFriend ]);
@@ -142,7 +130,4 @@ class UserController extends AbstractController
 
         return $response;
     }
-
-
-    
 }

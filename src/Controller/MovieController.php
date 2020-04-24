@@ -7,9 +7,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpClient\HttpClient;
 use App\Entity\Rating;
 use App\Entity\Comment;
+use App\Service\APIManager;
 
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -26,23 +26,16 @@ class MovieController extends AbstractController
     /**
      * @Route("/", name="movie_index")
      */
-    public function index(EntityManagerInterface $entityManager)
+    public function index(APIManager $apiManager)
     {
-        // request HTTP / API MovieDB
-        $client = HttpClient::create();
-        $secret= "key";
-        $link = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
-        $response = $client->request('GET', $link);
-        $statusCode = $response->getStatusCode();
-        $contentType = $response->getHeaders()['content-type'][0];
-        $content = $response->toArray();
-        return $this->render("movie/index.html.twig",["movies"=>$content["results"]]);
+        $movies = $apiManager->getDiscover();
+        return $this->render("movie/index.html.twig",["movies"=>$movies]);
     }
 
     /**
      * @Route("/show/{id}-{name}", name="movie_show")
      */
-    public function show(int $id, EntityManagerInterface $entityManager, Request $request)
+    public function show(int $id, EntityManagerInterface $entityManager, Request $request, APIManager $apiManager)
     {
         $ratingRepo = $entityManager->getRepository(Rating::class);
         $commentRepo = $entityManager->getRepository(Comment::class);
@@ -78,22 +71,11 @@ class MovieController extends AbstractController
             return $this->redirectToRoute('movie_index');
         }
         
-        
         $comments = $commentRepo->findBy(['movieId' => $id,'replyTo'=>null]);
-        //dd($comments)
 
-        // request HTTP / API MovieDB
-        $client = HttpClient::create();
-        $secret= "key";//to move elsewhere, .env maybe ?
-        $link = "https://api.themoviedb.org/3/movie/".$id."?api_key=".$secret."&language=fr-FR";
-        $response = $client->request('GET', $link);
-        $content = $response->toArray();
+        $content = $apiManager->getMovie($id);
+        $trailer = $apiManager->getTrailer($id);
 
-        $links = "https://api.themoviedb.org/3/movie/".$id."/videos?api_key=".$secret."&language=fr-FR";
-        $responses = $client->request('GET', $links);
-        $trailer=  $responses->toArray();
-        $c = $trailer['results'][0];
-
-        return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$c , "formComment"=>  $formComment->createView(),"comments"=>$comments]);
+        return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$trailer , "formComment"=>  $formComment->createView(),"comments"=>$comments]);
     }
 }

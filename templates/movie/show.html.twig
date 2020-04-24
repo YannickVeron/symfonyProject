@@ -40,10 +40,14 @@
                         <a class="profile-link" href="{{ path('user_show',{id:comment.user.id,}) }}">{{comment.user.email}}</a>
                     </div>
                     <div>{{comment.text}}</div>
-                    <button class="btn btn-secondary" type="button" onclick="replyTo({{comment.id}},'{{comment.user.email}}')">Reply</button>
+                    {% if is_granted('ROLE_USER') %}
+                        <button class="btn btn-secondary" type="button" onclick="replyTo({{comment.id}},'{{comment.user.email}}')">Reply</button>
+                    {% endif %}
                     {%for replyComment in comment.getComments %}
                     <div class="comment-reply">
-                        <div class="comment-owner">{{replyComment.user.email}}</div>
+                        <div class="comment-owner">
+                            <a class="profile-link" href="{{ path('user_show',{id:replyComment.user.id,}) }}">{{replyComment.user.email}}</a>
+                        </div>
                         <div>{{replyComment.text}}</div>
                     </div>
                     {% endfor %}
