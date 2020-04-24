@@ -30,11 +30,9 @@ class UserController extends AbstractController
         $user->setPassword("");
         $form = $this->createForm(UserType::class, $user);
 
-
         // Lors d'un envoie du formulaire on récupère les données
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $user->setPassword(
                 $passwordEncoder->encodePassword($user, $form->get('password')->getData())
             );
@@ -42,7 +40,7 @@ class UserController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
-            return $this->redirectToRoute('app_login'  );
+            return $this->redirectToRoute('app_login' );
         }
 
         return $this->render("security/inscription.html.twig", [
@@ -70,12 +68,13 @@ class UserController extends AbstractController
         // Obtenir la liste des commentaires Fasers
         $moviesComments = [];
         foreach($comments as $key=>$comment){
-            // test obligatoires car on souhaite obtenir directement les commentaires sur le films (1er degrées)
+            // mandatory test because we want to get direct comments on the films (1st degrees)
             $firstDegrade = $comment->getReplyTo();
             if( $firstDegrade == null ){
                 $moviesComments[]=["comment"=>$comment,"movie"=>$apiManager->getMovie($comment->getMovieId())];
             }
         }
+        
         return $this->render("user/show.html.twig",["user"=>$user,"movies"=>$movies, "movieComments"=> $moviesComments, 'isFriend'=>$isFriend ]);
     }
 
@@ -101,14 +100,13 @@ class UserController extends AbstractController
     {
         /* on récupère la valeur envoyée */
         $research = $request->request->get('research');
-        if( 0 == 0 ){
+        if( isset($research) ){
            
             // Request who return array whitch response
             $query = $entityManager->createQuery(
                 "SELECT u FROM App\Entity\User u WHERE u.email like :research " 
             )->setParameter('research', "$research%");
             $result = $query->getResult();
-
               
             // transform response for return Response
             $researchUser = array();
@@ -117,8 +115,7 @@ class UserController extends AbstractController
                     "id"    => $user->getId(),
                     "email"  => $user->getEmail(),
                 );
-            }
-              
+            }    
             $info =  $researchUser;
         }
 

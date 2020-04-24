@@ -17,24 +17,36 @@ class APIManager
 
     public function getDiscover()
     {
-        $link = "https://api.themoviedb.org/3/discover/movie?api_key=".$this->secret;
-        $response = $this->client->request('GET', $link);
+        $url = "https://api.themoviedb.org/3/discover/movie?api_key=".$this->secret;
+        $response = $this->client->request('GET', $url);
         $content = $response->toArray();
         return $content["results"];
     }
 
     public function getMovie(int $id)
     {
-        $link = "https://api.themoviedb.org/3/movie/".$id."?api_key=".$this->secret."&language=fr-FR";
-        $response = $this->client->request('GET', $link);
+        $url = "https://api.themoviedb.org/3/movie/".$id."?api_key=".$this->secret."&language=fr-FR";
+        $response = $this->client->request('GET', $url);
         return $response->toArray();
     }
 
     public function getTrailer(int $id)
     {
-        $links = "https://api.themoviedb.org/3/movie/".$id."/videos?api_key=".$this->secret."&language=fr-FR";
-        $responses = $this->client->request('GET', $links);
+        $url = "https://api.themoviedb.org/3/movie/".$id."/videos?api_key=".$this->secret."&language=fr-FR";
+        $responses = $this->client->request('GET', $url);
         $trailer=  $responses->toArray();
         return $trailer['results'][0];
+        if(! empty($trailer['results'][0])) { // take the first trailer
+           return $trailer['results'][0]; 
+        }else{
+            return ["key" => "notrailer"];
+        }
+    }
+
+    public function getSimilar(int $id)
+    {
+        $url = "https://api.themoviedb.org/3/movie/".$id."/similar?api_key=".$this->secret."&language=fr&page=1";
+        $responseCategorie = $this->client->request('GET', $url);
+        return $responseCategorie->toArray();
     }
 }

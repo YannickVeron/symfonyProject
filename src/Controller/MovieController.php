@@ -76,6 +76,8 @@ class MovieController extends AbstractController
         $content = $apiManager->getMovie($id);
         $trailer = $apiManager->getTrailer($id);
 
-        return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$trailer , "formComment"=>  $formComment->createView(),"comments"=>$comments]);
+        $listMovieCategorie =  $apiManager->getSimilar($id);
+
+        return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$trailer , "formComment"=>  $formComment->createView(),"comments"=>$comments, "listMovieCategorie"=>$listMovieCategorie['results']]);
     }
 }
