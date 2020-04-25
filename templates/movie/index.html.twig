@@ -19,7 +19,15 @@
         </div>
 
         <div class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
-            <h2>Research</h2>
+            <h2> fil d'actualité </h2>
+            {% if listCommentFriend|length == 0 %}
+                <p>Ajouter des Amis pour voirs leurs commentaires récents.</p>
+            {% endif %}
+            {%for commentFriend in listCommentFriend %}
+                {%for comment in commentFriend %}
+                     <div> <a href="{{ path('user_show',{id:comment.user.id} )}}" > {{comment.user.email}}:    </a> {{comment.text}} </div>
+                {% endfor %}
+            {% endfor %}
         </div>
     </div>
     <script>

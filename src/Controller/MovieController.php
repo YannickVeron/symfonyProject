@@ -10,15 +10,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Rating;
 use App\Entity\Comment;
 use App\Service\APIManager;
-
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-
 use App\formulaire\FormComment;
-
-
 
 
 class MovieController extends AbstractController
@@ -29,7 +25,15 @@ class MovieController extends AbstractController
     public function index(APIManager $apiManager)
     {
         $movies = $apiManager->getDiscover();
-        return $this->render("movie/index.html.twig",["movies"=>$movies]);
+        $user = $this->getUser();
+        $listCommentFriend = array();
+        if( isset($user)){
+            $userFriend = $user->getFriends();
+            foreach($userFriend as $use){
+                $listCommentFriend[] = $use->getFriend()->getComments();
+            }
+        }
+        return $this->render("movie/index.html.twig",["movies"=>$movies , "listCommentFriend"=>$listCommentFriend ]);
     }
 
     /**
