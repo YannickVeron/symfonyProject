@@ -7,6 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\Rating;
 use App\Entity\Comment;
 use App\Service\APIManager;
@@ -15,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use App\formulaire\FormComment;
+use \Datetime;
 
 
 class MovieController extends AbstractController
@@ -27,12 +29,21 @@ class MovieController extends AbstractController
         $movies = $apiManager->getDiscover();
         $user = $this->getUser();
         $listCommentFriend = array();
-        if( isset($user)){
+        if(isset($user)){
             $userFriend = $user->getFriends();
             foreach($userFriend as $use){
-                $listCommentFriend[] = $use->getFriend()->getComments();
+                $listCommentFriend = array_merge($listCommentFriend,$use->getFriend()->getComments()->toArray());
             }
         }
+        usort($listCommentFriend, function($a, $b) {
+            $ad = $a->getCreatedAt();
+            $bd = $b->getCreatedAt();
+            if($ad == $bd) {
+                return 0;
+            }
+            return $ad > $bd ? -1 : 1;
+        });
+        //dd($listCommentFriend);
         return $this->render("movie/index.html.twig",["movies"=>$movies , "listCommentFriend"=>$listCommentFriend ]);
     }
 

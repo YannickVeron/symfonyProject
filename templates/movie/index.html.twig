@@ -23,10 +23,8 @@
             {% if listCommentFriend|length == 0 %}
                 <p>Ajouter des Amis pour voirs leurs commentaires récents.</p>
             {% endif %}
-            {%for commentFriend in listCommentFriend %}
-                {%for comment in commentFriend %}
-                     <div> <a href="{{ path('user_show',{id:comment.user.id} )}}" > {{comment.user.email}}:    </a> {{comment.text}} </div>
-                {% endfor %}
+            {%for comment in listCommentFriend %}
+                    <div>{{comment.createdAt|date('d/m/y - H:i')}} <a href="{{ path('user_show',{id:comment.user.id} )}}" > {{comment.user.email}}</a>=><a href="{{ path('movie_show',{id:comment.movieId,name:'movie'}) }}">movie</a>: {{comment.text}} </div>
             {% endfor %}
         </div>
     </div>

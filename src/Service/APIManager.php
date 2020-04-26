@@ -35,12 +35,11 @@ class APIManager
         $url = "https://api.themoviedb.org/3/movie/".$id."/videos?api_key=".$this->secret."&language=fr-FR";
         $responses = $this->client->request('GET', $url);
         $trailer=  $responses->toArray();
-        return $trailer['results'][0];
-        if(! empty($trailer['results'][0])) { // take the first trailer
-           return $trailer['results'][0]; 
-        }else{
-            return ["key" => "notrailer"];
+        if(empty($trailer['results'])) { 
+           return ["key" => "notrailer"];
         }
+        return $trailer['results'][0]; // take the first trailer
+        
     }
 
     public function getSimilar(int $id)
