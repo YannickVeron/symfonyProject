@@ -28,6 +28,11 @@ class Friend
      */
     private $friend;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $status;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -55,5 +60,22 @@ class Friend
         $this->friend = $friend;
 
         return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $Status): self
+    {
+        $this->status = $Status;
+
+        return $this;
+    }
+
+    public function __toString(): String
+    {
+        return "User_".$this->getUser()->getId()."-Friend_".$this->getFriend()->getId();
     }
 }

@@ -44,9 +44,15 @@ class Comment
      */
     private $replyTo;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created_at;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->setCreatedAt(new \DateTime());
     }
 
     public function getId(): ?int
@@ -133,5 +139,17 @@ class Comment
     public function __toString(): String
     {
         return $this->getText();
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
     }
 }

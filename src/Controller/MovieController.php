@@ -7,18 +7,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpClient\HttpClient;
+use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\Rating;
 use App\Entity\Comment;
-
+use App\Service\APIManager;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-
 use App\formulaire\FormComment;
-
-
+use \Datetime;
 
 
 class MovieController extends AbstractController
@@ -26,44 +24,33 @@ class MovieController extends AbstractController
     /**
      * @Route("/", name="movie_index")
      */
-    public function index(Request $request)
+    public function index(APIManager $apiManager)
     {
-        // request HTTP / API MovieDB
-        $client = HttpClient::create();
-        $secret= "key";
-
-        $linkCategories = 'https://api.themoviedb.org/3/discover/genre/movie/list?api_key='.$secret.'&language=fr-FR';
-
-        $response = $client->request('GET', $link);
-        $statusCode = $response->getStatusCode();
-        $contentType = $response->getHeaders()['content-type'][0];
-        $content = $response->toArray();
-        
-        if ($request->isXmlHttpRequest() || $request->query->get('showJson') == 1) {  
-            $linkMovies = 'https://api.themoviedb.org/3/discover/movie?api_key='.$secret.'&language=fr-FR&with_genres=';
-            
-            $responseMovies = $client->request('GET', $link);
-            $statusCodeMovies = $response->getStatusCode();
-            $contentTypeMovies = $response->getHeaders()['content-type'][0];
-            $contentMovies = $response->toArray();
-
-            return $this->render('movie/index.html.twig',["movies"=>$contentMovies, "categories"=>$categories]); 
-        } else { 
-            $linkMovies = "https://api.themoviedb.org/3/discover/movie?api_key=".$secret;
-
-            $responseMovies = $client->request('GET', $link);
-            $statusCodeMovies = $response->getStatusCode();
-            $contentTypeMovies = $response->getHeaders()['content-type'][0];
-            $contentMovies = $response->toArray();
-
-            return $this->render('movie/index.html.twig',["movies"=>$contentMovies, "categories"=>$categories]); 
+        $movies = $apiManager->getDiscover();
+        $user = $this->getUser();
+        $listCommentFriend = array();
+        if(isset($user)){
+            $userFriend = $user->getFriends();
+            foreach($userFriend as $use){
+                $listCommentFriend = array_merge($listCommentFriend,$use->getFriend()->getComments()->toArray());
+            }
         }
+        usort($listCommentFriend, function($a, $b) {
+            $ad = $a->getCreatedAt();
+            $bd = $b->getCreatedAt();
+            if($ad == $bd) {
+                return 0;
+            }
+            return $ad > $bd ? -1 : 1;
+        });
+        //dd($listCommentFriend);
+        return $this->render("movie/index.html.twig",["movies"=>$movies , "listCommentFriend"=>$listCommentFriend ]);
     }
 
     /**
      * @Route("/show/{id}-{name}", name="movie_show")
      */
-    public function show(int $id, EntityManagerInterface $entityManager, Request $request)
+    public function show(int $id, EntityManagerInterface $entityManager, Request $request, APIManager $apiManager)
     {
         $ratingRepo = $entityManager->getRepository(Rating::class);
         $commentRepo = $entityManager->getRepository(Comment::class);
@@ -86,7 +73,7 @@ class MovieController extends AbstractController
             ->add('replyToId',HiddenType::class,["mapped" => false])
             ->getForm();
 
-        // Lors d'un envoie du formulaire on récupère les données
+        //Lors d'un envoie du formulaire on récupère les données
         $formComment->handleRequest($request);
         if ($formComment->isSubmitted() && $formComment->isValid()) {
             $comment->setUser($user);
@@ -99,22 +86,13 @@ class MovieController extends AbstractController
             return $this->redirectToRoute('movie_index');
         }
         
-        
         $comments = $commentRepo->findBy(['movieId' => $id,'replyTo'=>null]);
-        //dd($comments)
 
-        // request HTTP / API MovieDB
-        $client = HttpClient::create();
-        $secret= "key";//to move elsewhere, .env maybe ?
-        $link = "https://api.themoviedb.org/3/movie/".$id."?api_key=".$secret."&language=fr-FR";
-        $response = $client->request('GET', $link);
-        $content = $response->toArray();
+        $content = $apiManager->getMovie($id);
+        $trailer = $apiManager->getTrailer($id);
 
-        $links = "https://api.themoviedb.org/3/movie/".$id."/videos?api_key=".$secret."&language=fr-FR";
-        $responses = $client->request('GET', $links);
-        $trailer=  $responses->toArray();
-        $c = $trailer['results'][0];
+        $listMovieCategorie =  $apiManager->getSimilar($id);
 
-        return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$c , "formComment"=>  $formComment->createView(),"comments"=>$comments]);
-    }    
+        return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$trailer , "formComment"=>  $formComment->createView(),"comments"=>$comments, "listMovieCategorie"=>$listMovieCategorie['results']]);
+    }
 }

@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Soial Movie{% endblock %}</title>
+        <title>{% block title %}Social Movie{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -14,10 +14,14 @@
     <header>
         <h1> Social Movie </h1>
         <a href="/" > Accueil </a>
-        <a href="/inscription" > Inscriptions </a>
-        <a href="/login" > Connection </a>
-        <a href="/logout" > Déconnection </a>
+        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+            <a href="/logout" > Déconnection </a>
+        {% else %}
+            <a href="/inscription" > Inscriptions </a>
+            <a href="/login" > Connection </a>
+        [{% endif %}
         <a href="/admin" > Admin </a>
+        <a href="{{ path('user_edit')}}">{{app.user}}</a>
     </header>
 
     <body>

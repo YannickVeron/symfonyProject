@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+
+
+
+
+
+ <div id="info" class="row">
+        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
+
+            <div>
+            <h3 style="font-weight:bold;">Amis</h3>
+                <div>
+                    <h4>Mes Amis</h4>
+                    {% for friend in friends %}
+                        <div class="row">
+                            {% if friend.user==app.user %}
+                                <div class="col-md-6"><a href="{{ path('user_show',{id:friend.friend.id}) }}">{{friend.friend.email}}</a></div>
+                            {% else %}
+                                <div class="col-md-6"><a href="{{ path('user_show',{id:friend.user.id}) }}">{{friend.user.email}}</a></div>
+                            {% endif %}
+                            <div class="col-md-1"><a href="{{ path('friend_remove',{friend_id:friend.id}) }}" class="btn btn-danger">Retirer</a></div>
+                        </div>
+                    {% else %}
+                        <div><i>Vous n'avez pas d'amis :(</i></div>
+                    {% endfor %}
+                </div>
+                <div>
+                    <h4>Demandes reçu</h4>
+                    {% for request in friendRequests %}
+                        <div class="row">
+                            <div class="col-md-6"><a href="{{ path('user_show',{id:request.user.id}) }}">{{request.user.email}}</a></div>
+                            <div class="col-md-1"><a href="{{ path('friend_accept',{request_id:request.id} )}}" class="btn btn-success">Accepter</a></div>
+                            <div class="col-md-1"><a href="{{ path('friend_remove',{friend_id:request.id}) }}" class="btn btn-danger">Refuser</a></div>
+                        </div>
+                    {% else %}
+                        <div><i>Pas de demande en attente</i></div>
+                    {% endfor %}
+                </div>
+                <div>
+                    <h4>Demandes envoyées</h4>
+                    {% for request in requestsSent %}
+                        <div class="row">
+                            <div class="col-md-6"><a href="{{ path('user_show',{id:request.user.id}) }}">{{request.friend.email}}</a></div>
+                            <div class="col-md-1"><a href="{{ path('friend_remove',{friend_id:request.id})}}" class="btn btn-danger">Annuler</a></div>
+                        </div>
+                    {% else %}
+                        <div><i>Pas de demande en attente</i></div>
+                    {% endfor %}
+                </div>
+            </div>
+         
+        </div>
+           
+
+
+        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
+            <form>
+                <label for="researchUser">Un Nouvelle amie ?</label>
+                <input type="text" id="valueUser" name="researchUser" >
+                 <button class="btn btn-secondary" id="researchUser" type="button">Research</button>
+            </form>
+            <div id="listUsersResearch">
+            </div>
+
+         
+        </div>
+
+    </div>
+
+
+
+            
+
+
+
+
+    <script>
+        $(document).ready(function(){
+            $('#researchUser').on('click', function(){
+                $.ajax({
+                    url: '{{ path('ajax_action') }}',
+                    type: "POST",
+                    dataType: "json", data: { "research": $('#valueUser').val()},
+                    async: true,
+                    success: function (data) {
+                        var comp = 0;
+                        var htmlListUsers ='';
+                        while (comp < data.info.length ) {
+                            htmlListUsers += '<a href="/user/show/'+ data.info[comp].id +'"> email : '+ data.info[comp].email +'  </a> <br>' ;
+                            comp++;
+                        }
+                        $('#listUsersResearch').html(htmlListUsers);
+                    }
+                })
+            });
+        });
+    </script>
+    
+{% endblock %}

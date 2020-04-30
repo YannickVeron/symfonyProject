@@ -62,33 +62,13 @@
         </div>
 
         <div class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
-            {% block movie_filtered %}
-                <h2>Research</h2>
-                    <div id="research-menu">
-                    <!-- Le label -->
-                    <label for="toggle-block"> Catégories </label>
-                
-                    <!-- La checkbox que je choisis cochée au démarrage -->
-                    <input id="toggle-block" name="toggle-block" type="checkbox" checked />
-                
-                    <!-- Le bloc à afficher -->
-                    <div id="category-block">
-                        <ul>
-                            {% for category in categories %}
-                                <li class="category-item">
-                                    {{ "id: " + category.id + " name: " + category.name }}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-
-                <a id = "loadmovies" href = "#">Load movies</a>  
-                </br> 
-                </br>  
-                
-                <div class="filtered-movies"></div> 
-            {% endblock %}
+            <h2> fil d'actualité </h2>
+            {% if listCommentFriend|length == 0 %}
+                <p>Ajouter des Amis pour voirs leurs commentaires récents.</p>
+            {% endif %}
+            {%for comment in listCommentFriend %}
+                    <div>{{comment.createdAt|date('d/m/y - H:i')}} <a href="{{ path('user_show',{id:comment.user.id} )}}" > {{comment.user.email}}</a>=><a href="{{ path('movie_show',{id:comment.movieId,name:'movie'}) }}">movie</a>: {{comment.text}} </div>
+            {% endfor %}
         </div>
     </div>
     {% block javascript %}{% endblock %}

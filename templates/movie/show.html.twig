@@ -1,15 +1,16 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    <div class="row"  >
+    <div class="row" style="overflow-y:scroll; height:50vh;width:100%;" >
         <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
-
-            <div class="row"  >
+            <div class="row"    >
                 <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
                     <img src="https://image.tmdb.org/t/p/w200/{{movie.poster_path}}" >
                 </div>
                 <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
                     <h2>{{movie.title}}</h2>
-                    <a href="https://www.youtube.com/watch?v={{trailer.key}}"> <span class="glyphicon glyphicon-step-forward"></span>  Trailer </a>
+                    {% if trailer.key != "notrailer" %}
+                        <a href="https://www.youtube.com/watch?v={{trailer.key}}"> <button type="button" class="btn btn-primary"> bande annonce </button> <span class="glyphicon glyphicon-step-forward"></span>   </a>
+                    {% endif %}   
                     <p>{{movie.overview}}</p>
                 </div>
             </div>
@@ -40,10 +41,14 @@
                         <a class="profile-link" href="{{ path('user_show',{id:comment.user.id,}) }}">{{comment.user.email}}</a>
                     </div>
                     <div>{{comment.text}}</div>
-                    <button class="btn btn-secondary" type="button" onclick="replyTo({{comment.id}},'{{comment.user.email}}')">Reply</button>
+                    {% if is_granted('ROLE_USER') %}
+                        <button class="btn btn-secondary" type="button" onclick="replyTo({{comment.id}},'{{comment.user.email}}')">Reply</button>
+                    {% endif %}
                     {%for replyComment in comment.getComments %}
                     <div class="comment-reply">
-                        <div class="comment-owner">{{replyComment.user.email}}</div>
+                        <div class="comment-owner">
+                            <a class="profile-link" href="{{ path('user_show',{id:replyComment.user.id,}) }}">{{replyComment.user.email}}</a>
+                        </div>
                         <div>{{replyComment.text}}</div>
                     </div>
                     {% endfor %}
@@ -51,6 +56,22 @@
             {% endfor %}
         </div>
     </div>
+
+    <div class="row" style="overflow-y:scroll; height:35vh;width:100%;" >
+        <div  class="col-lg-12" class="col-md-12" class="col-xs-12" class="col-sm-12" >
+            <h2>Films Similaires</h2>
+            {%for movie in listMovieCategorie %}
+                <div class="card" >
+                    <div class="card-body">
+                        <img style="width:150px; height;80px;" src="https://image.tmdb.org/t/p/w200/{{movie.poster_path}}" >
+                        <h5 class="card-title"><p>{{movie.title}}</p></h5>
+                        <a class="btn btn-primary" href="{{ path('movie_show',{id:movie.id,name:movie.title}) }}">Detail</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+         
     <style>
         .rating {
             float:left;
