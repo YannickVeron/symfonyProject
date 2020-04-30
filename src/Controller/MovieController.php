@@ -28,6 +28,7 @@ class MovieController extends AbstractController
     {
         $movies = $apiManager->getDiscover();
         $user = $this->getUser();
+        //$categories = $this->getCategories();
         $listCommentFriend = array();
         if(isset($user)){
             $userFriend = $user->getFriends();
@@ -44,6 +45,7 @@ class MovieController extends AbstractController
             return $ad > $bd ? -1 : 1;
         });
         //dd($listCommentFriend);
+        //"categories"=>$categories
         return $this->render("movie/index.html.twig",["movies"=>$movies , "listCommentFriend"=>$listCommentFriend ]);
     }
 

@@ -48,4 +48,11 @@ class APIManager
         $responseCategorie = $this->client->request('GET', $url);
         return $responseCategorie->toArray();
     }
+
+    public function getCategories() {
+        $url = 'https://api.themoviedb.org/3/discover/genre/movie/list?api_key='.$this->$secret.'&language=fr-FR';
+        $response = $this->client->request('GET', $url);
+        $genres = $response->toArray();
+        return $genres["results"];
+    }
 }
