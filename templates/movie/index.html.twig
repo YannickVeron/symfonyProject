@@ -4,7 +4,7 @@
         <div  class="col-lg-6" class="col-md-6" class="col-xs-12" class="col-sm-12" >
             <div id="suggestion">
                 <h2>Discover</h2>
-                {#
+                
                 <h3>Search</h3>
                     <div id="research-menu">
                     <!-- Le label -->
@@ -15,17 +15,18 @@
                 
                     <!-- Le bloc à afficher -->
                     <div id="category-block">
-                        <ul>
-                            {% for category in categories %}
+                        
+                        <select id="listCategorie">
+                             {% for category in categories %}
                                 <li class="category-item">
-                                    {{ "id: " + category.id + " name: " + category.name }}
+                                    <option value="{{category.id}}"> {{category.name}}</option>
                                 </li>
-                            {% endfor %}
-                        </ul>
+                            {% endfor %}        
+                        </select>
                     </div>
                 </div>
-                #}
-                <ul>
+                
+                <div id="lisyMovie">
                     {% for movie in movies %}
                         <div class="card" >
                             <div class="card-body">
@@ -35,7 +36,8 @@
                             </div>
                         </div>
                     {% endfor %}
-                </ul>
+                </div>
+           
             </div>
         </div>
 
@@ -51,9 +53,27 @@
     </div>
     <script>
         $(document).ready(function(){
-
-        });
+            $('#listCategorie').on('change', function(){
+                $.ajax({
+                    url: '{{ path('listcategoriefunction') }}',
+                    type: "POST",
+                    dataType: "json", data: { "id": $(this).val() },
+                    async: true,
+                    success: function (data) {
+                        var comp = 0;
+                        var htmlListUsers ='';
+                        while (comp < data.info.length ) {
+                            htmlListUsers += ' <div class="card" > <div class="card-body"> <img src="https://image.tmdb.org/t/p/w200/'+data.info[comp].poster_path +'" >  <h5 class="card-title"><p> '+data.info[comp].title +' </p></h5>    <a class="btn btn-primary" href="/show/'+data.info[comp].id+'-'+data.info[comp].title+'">Detail</a>  </div></div>' ;
+                            comp++;
+                        }
+                        $('#lisyMovie').html(htmlListUsers);
+                    }
+                })
+            }); 
+        });    
     </script>
+    
+        
 {% endblock %}
 
 {% block index_stylesheet %}

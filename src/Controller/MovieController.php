@@ -28,7 +28,7 @@ class MovieController extends AbstractController
     {
         $movies = $apiManager->getDiscover();
         $user = $this->getUser();
-        //$categories = $this->getCategories();
+        $categories = $apiManager->getCategories();
         $listCommentFriend = array();
         if(isset($user)){
             $userFriend = $user->getFriends();
@@ -45,8 +45,8 @@ class MovieController extends AbstractController
             return $ad > $bd ? -1 : 1;
         });
         //dd($listCommentFriend);
-        //"categories"=>$categories
-        return $this->render("movie/index.html.twig",["movies"=>$movies , "listCommentFriend"=>$listCommentFriend ]);
+        
+        return $this->render("movie/index.html.twig",["movies"=>$movies , "listCommentFriend"=>$listCommentFriend, "categories"=>$categories ]);
     }
 
     /**
@@ -97,4 +97,34 @@ class MovieController extends AbstractController
 
         return $this->render("movie/show.html.twig",["movie"=>$content,"rating"=>$avgScore[array_key_first($avgScore)] , "trailer"=>$trailer , "formComment"=>  $formComment->createView(),"comments"=>$comments, "listMovieCategorie"=>$listMovieCategorie['results']]);
     }
+
+
+
+
+    /**
+    * @Route("/listcategorie", name="listcategoriefunction")
+    */
+    public function ajaxListCategorie(Request $request, EntityManagerInterface $entityManager,  APIManager $apiManager )
+    {
+        /* on récupère la valeur envoyée */
+        $id = $request->request->get('id');
+        if( isset($id) ){            
+
+            $info = $apiManager->getListMovieByCategorie($id);
+
+        
+              
+        }        /* On renvoie une réponse encodée en JSON */
+        $response = new Response(json_encode(array(
+            'info' => $info
+        )));
+        $response->headers->set('Content-Type', 'application/json');        return $response;
+    }
+
+
+
+
+
+
+
 }
