@@ -1,6 +1,14 @@
 easy_admin:
     entities:
-        # List the entity class name you want to manage
-        - App\Entity\User
-        - App\Entity\Rating
-        - App\Entity\Comment
+        User:
+            class: App\Entity\User
+        Ratting:
+            class: App\Entity\Rating
+        Comment:
+            class: App\Entity\Comment
+        UserDroit:
+            class: App\Entity\User
+            form:
+                fields:
+                    - { property: 'roles', type: 'choice', type_options: { multiple: true, choices: { 'ROLE_USER': 'ROLE_USER', 'ROLE_ADMIN': 'ROLE_ADMIN' } } }
+        

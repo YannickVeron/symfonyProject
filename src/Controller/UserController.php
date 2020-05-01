@@ -36,7 +36,16 @@ class UserController extends AbstractController
             $user->setPassword(
                 $passwordEncoder->encodePassword($user, $form->get('password')->getData())
             );
-            $user->setRoles(array('ROLE_ADMIN'));
+
+            // Gestion des Roles
+            $repository = $this->getDoctrine()->getRepository(User::class);
+            $c = $repository->findAll();
+            if(count($c)== 0){
+                $user->setRoles(array('ROLE_ADMIN'));
+            }else{
+                $user->setRoles(array('ROLE_USER'));
+            }
+           
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
