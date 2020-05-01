@@ -10,3 +10,7 @@ Cela permet également d'accéder plus facilement au profil de ces utilisateurs 
 N'importe qui peut consulter le profil d'un utilisateur ou sont affichées ses notes mises à des films ainsi que ses commentaires.
 
 La récupération des films se fait via l'API de https://www.themoviedb.org/
+
+Pour utiliser l'aplication: 
+- Vous devez obtenir une Key sur le site de l'API
+* ajouter cette Key au fichier ".env".
